@@ -1,5 +1,5 @@
-resource "azurerm_frontdoor_firewall_policy" "frontdoor_firewall_policys" {
-  for_each = var.frontdoor_firewall_policys
+resource "azurerm_frontdoor_firewall_policy" "frontdoor_firewall_policies" {
+  for_each = var.frontdoor_firewall_policies
 
   name                              = each.value.name
   resource_group_name               = each.value.resource_group_name

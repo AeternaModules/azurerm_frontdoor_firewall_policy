@@ -1,6 +1,6 @@
-variable "frontdoor_firewall_policys" {
+variable "frontdoor_firewall_policies" {
   description = <<EOT
-Map of frontdoor_firewall_policys, attributes below
+Map of frontdoor_firewall_policies, attributes below
 Required:
     - name
     - resource_group_name
@@ -54,25 +54,25 @@ EOT
     resource_group_name               = string
     custom_block_response_body        = optional(string)
     custom_block_response_status_code = optional(number)
-    enabled                           = optional(bool, true)
-    mode                              = optional(string, "Prevention")
+    enabled                           = optional(bool)   # Default: true
+    mode                              = optional(string) # Default: "Prevention"
     redirect_url                      = optional(string)
     tags                              = optional(map(string))
     custom_rule = optional(list(object({
       action  = string
-      enabled = optional(bool, true)
+      enabled = optional(bool) # Default: true
       match_condition = optional(list(object({
         match_values       = list(string)
         match_variable     = string
-        negation_condition = optional(bool, false)
+        negation_condition = optional(bool) # Default: false
         operator           = string
         selector           = optional(string)
         transforms         = optional(list(string))
       })))
       name                           = string
-      priority                       = optional(number, 1)
-      rate_limit_duration_in_minutes = optional(number, 1)
-      rate_limit_threshold           = optional(number, 10)
+      priority                       = optional(number) # Default: 1
+      rate_limit_duration_in_minutes = optional(number) # Default: 1
+      rate_limit_threshold           = optional(number) # Default: 10
       type                           = string
     })))
     managed_rule = optional(list(object({
@@ -89,7 +89,7 @@ EOT
         })))
         rule = optional(list(object({
           action  = string
-          enabled = optional(bool, false)
+          enabled = optional(bool) # Default: false
           exclusion = optional(list(object({
             match_variable = string
             operator       = string
@@ -105,7 +105,7 @@ EOT
   }))
   validation {
     condition = alltrue([
-      for k, v in var.frontdoor_firewall_policys : (
+      for k, v in var.frontdoor_firewall_policies : (
         v.custom_rule == null || (length(v.custom_rule) <= 100)
       )
     ])
@@ -113,7 +113,7 @@ EOT
   }
   validation {
     condition = alltrue([
-      for k, v in var.frontdoor_firewall_policys : (
+      for k, v in var.frontdoor_firewall_policies : (
         v.custom_rule == null || alltrue([for item in v.custom_rule : (item.match_condition == null || (length(item.match_condition) <= 10))])
       )
     ])
@@ -121,7 +121,7 @@ EOT
   }
   validation {
     condition = alltrue([
-      for k, v in var.frontdoor_firewall_policys : (
+      for k, v in var.frontdoor_firewall_policies : (
         v.managed_rule == null || (length(v.managed_rule) <= 100)
       )
     ])
@@ -129,7 +129,7 @@ EOT
   }
   validation {
     condition = alltrue([
-      for k, v in var.frontdoor_firewall_policys : (
+      for k, v in var.frontdoor_firewall_policies : (
         v.managed_rule == null || alltrue([for item in v.managed_rule : (item.exclusion == null || (length(item.exclusion) <= 100))])
       )
     ])
@@ -137,7 +137,7 @@ EOT
   }
   validation {
     condition = alltrue([
-      for k, v in var.frontdoor_firewall_policys : (
+      for k, v in var.frontdoor_firewall_policies : (
         v.managed_rule == null || alltrue([for item in v.managed_rule : (item.override == null || (length(item.override) <= 100))])
       )
     ])
@@ -145,7 +145,7 @@ EOT
   }
   validation {
     condition = alltrue([
-      for k, v in var.frontdoor_firewall_policys : (
+      for k, v in var.frontdoor_firewall_policies : (
         v.managed_rule == null || alltrue([for item in v.managed_rule : (item.exclusion == null || (length(item.exclusion) <= 100))])
       )
     ])
@@ -153,7 +153,7 @@ EOT
   }
   validation {
     condition = alltrue([
-      for k, v in var.frontdoor_firewall_policys : (
+      for k, v in var.frontdoor_firewall_policies : (
         v.managed_rule == null || alltrue([for item in v.managed_rule : (item.rule == null || (length(item.rule) <= 1000))])
       )
     ])
@@ -161,7 +161,7 @@ EOT
   }
   validation {
     condition = alltrue([
-      for k, v in var.frontdoor_firewall_policys : (
+      for k, v in var.frontdoor_firewall_policies : (
         v.managed_rule == null || alltrue([for item in v.managed_rule : (item.exclusion == null || (length(item.exclusion) <= 100))])
       )
     ])
