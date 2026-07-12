@@ -1,3 +1,7 @@
+output "frontdoor_firewall_policies_id" {
+  description = "Map of id values across all frontdoor_firewall_policies, keyed the same as var.frontdoor_firewall_policies"
+  value       = { for k, v in azurerm_frontdoor_firewall_policy.frontdoor_firewall_policies : k => v.id }
+}
 output "frontdoor_firewall_policies_custom_block_response_body" {
   description = "Map of custom_block_response_body values across all frontdoor_firewall_policies, keyed the same as var.frontdoor_firewall_policies"
   value       = { for k, v in azurerm_frontdoor_firewall_policy.frontdoor_firewall_policies : k => v.custom_block_response_body }
