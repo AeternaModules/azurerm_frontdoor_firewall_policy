@@ -146,7 +146,7 @@ EOT
   validation {
     condition = alltrue([
       for k, v in var.frontdoor_firewall_policies : (
-        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.exclusion == null || (length(item.exclusion) <= 100))])
+        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.override == null || alltrue([for item in item.override : (item.exclusion == null || (length(item.exclusion) <= 100))]))])
       )
     ])
     error_message = "Each exclusion list must contain at most 100 items"
@@ -154,7 +154,7 @@ EOT
   validation {
     condition = alltrue([
       for k, v in var.frontdoor_firewall_policies : (
-        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.rule == null || (length(item.rule) <= 1000))])
+        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.override == null || alltrue([for item in item.override : (item.rule == null || (length(item.rule) <= 1000))]))])
       )
     ])
     error_message = "Each rule list must contain at most 1000 items"
@@ -162,7 +162,7 @@ EOT
   validation {
     condition = alltrue([
       for k, v in var.frontdoor_firewall_policies : (
-        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.exclusion == null || (length(item.exclusion) <= 100))])
+        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.override == null || alltrue([for item in item.override : (item.rule == null || alltrue([for item in item.rule : (item.exclusion == null || (length(item.exclusion) <= 100))]))]))])
       )
     ])
     error_message = "Each exclusion list must contain at most 100 items"
