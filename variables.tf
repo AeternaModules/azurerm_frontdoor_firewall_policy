@@ -54,25 +54,25 @@ EOT
     resource_group_name               = string
     custom_block_response_body        = optional(string)
     custom_block_response_status_code = optional(number)
-    enabled                           = optional(bool)   # Default: true
-    mode                              = optional(string) # Default: "Prevention"
+    enabled                           = optional(bool)
+    mode                              = optional(string)
     redirect_url                      = optional(string)
     tags                              = optional(map(string))
     custom_rule = optional(list(object({
       action  = string
-      enabled = optional(bool) # Default: true
+      enabled = optional(bool)
       match_condition = optional(list(object({
         match_values       = list(string)
         match_variable     = string
-        negation_condition = optional(bool) # Default: false
+        negation_condition = optional(bool)
         operator           = string
         selector           = optional(string)
         transforms         = optional(list(string))
       })))
       name                           = string
-      priority                       = optional(number) # Default: 1
-      rate_limit_duration_in_minutes = optional(number) # Default: 1
-      rate_limit_threshold           = optional(number) # Default: 10
+      priority                       = optional(number)
+      rate_limit_duration_in_minutes = optional(number)
+      rate_limit_threshold           = optional(number)
       type                           = string
     })))
     managed_rule = optional(list(object({
@@ -89,7 +89,7 @@ EOT
         })))
         rule = optional(list(object({
           action  = string
-          enabled = optional(bool) # Default: false
+          enabled = optional(bool)
           exclusion = optional(list(object({
             match_variable = string
             operator       = string
