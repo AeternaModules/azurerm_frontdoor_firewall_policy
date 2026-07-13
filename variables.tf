@@ -167,101 +167,126 @@ EOT
     ])
     error_message = "Each exclusion list must contain at most 100 items"
   }
-  # --- Unconfirmed validation candidates, derived from azurerm_frontdoor_firewall_policy's provider source ---
-  # Not auto-enabled: either a bespoke provider validator we can't safely translate,
-  # or a path that crosses a list-typed block (needs its own for_each wrapping).
-  # Review, translate into a real validation{} block above, and delete once confirmed.
-  # path: name
-  #   source:    validate.FrontDoorWAFName: no recognizable `if ... { errors = append(...) }` pattern - read it by hand
-  # path: resource_group_name
-  #   condition: length(value) <= 90
-  #   message:   [from resourcegroups.ValidateName: invalid when len(value) > 90]
-  #   source:    [from resourcegroups.ValidateName: invalid when len(value) > 90]
-  # path: resource_group_name
-  #   condition: !endswith(value, ".")
-  #   message:   [from resourcegroups.ValidateName: must not end with "."]
-  #   source:    [from resourcegroups.ValidateName: must not end with "."]
-  # path: resource_group_name
-  #   condition: length(value) != 0
-  #   message:   [from resourcegroups.ValidateName: invalid when len(value) == 0]
-  #   source:    [from resourcegroups.ValidateName: invalid when len(value) == 0]
-  # path: resource_group_name
-  #   source:    [from resourcegroups.ValidateName] !matched
-  # path: mode
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: redirect_url
-  #   source:    validation.IsURLWithScheme(...) - no translation rule yet, add one
-  # path: custom_block_response_status_code
-  #   source:    validation.IntInSlice(...) - no translation rule yet, add one
-  # path: custom_block_response_body
-  #   source:    validate.CustomBlockResponseBody: no recognizable `if ... { errors = append(...) }` pattern - read it by hand
-  # path: custom_rule.name
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: custom_rule.type
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: custom_rule.action
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: custom_rule.match_condition.match_variable
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: custom_rule.match_condition.match_values[*]
-  #   condition: length(value) >= 1 && length(value) <= 256
-  #   message:   must be between 1 and 256 characters
-  # path: custom_rule.match_condition.operator
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: custom_rule.match_condition.selector
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: custom_rule.match_condition.transforms[*]
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: managed_rule.type
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: managed_rule.version
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: managed_rule.exclusion.match_variable
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: managed_rule.exclusion.operator
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: managed_rule.exclusion.selector
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: managed_rule.override.rule_group_name
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: managed_rule.override.exclusion.match_variable
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: managed_rule.override.exclusion.operator
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: managed_rule.override.exclusion.selector
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: managed_rule.override.rule.rule_id
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: managed_rule.override.rule.exclusion.match_variable
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: managed_rule.override.rule.exclusion.operator
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: managed_rule.override.rule.exclusion.selector
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: managed_rule.override.rule.action
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: tags
-  #   condition: length(value) <= 50
-  #   message:   [from tags.Validate: invalid when len(value) > 50]
-  #   source:    [from tags.Validate: invalid when len(value) > 50]
-  # path: tags
-  #   condition: length(value) <= 512
-  #   message:   [from tags.Validate: invalid when len(value) > 512]
-  #   source:    [from tags.Validate: invalid when len(value) > 512]
-  # path: tags
-  #   source:    [from tags.Validate] err != nil
-  # path: tags
-  #   condition: length(value) <= 256
-  #   message:   [from tags.Validate: invalid when len(value) > 256]
-  #   source:    [from tags.Validate: invalid when len(value) > 256]
+  validation {
+    condition = alltrue([
+      for k, v in var.frontdoor_firewall_policies : (
+        length(v.resource_group_name) <= 90
+      )
+    ])
+    error_message = "[from resourcegroups.ValidateName: invalid when len(value) > 90]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.frontdoor_firewall_policies : (
+        !endswith(v.resource_group_name, ".")
+      )
+    ])
+    error_message = "[from resourcegroups.ValidateName: must not end with \".\"]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.frontdoor_firewall_policies : (
+        length(v.resource_group_name) != 0
+      )
+    ])
+    error_message = "[from resourcegroups.ValidateName: invalid when len(value) == 0]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.frontdoor_firewall_policies : (
+        v.custom_block_response_status_code == null || (contains([200, 403, 405, 406, 429], v.custom_block_response_status_code))
+      )
+    ])
+    error_message = "must be one of: 200, 403, 405, 406, 429"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.frontdoor_firewall_policies : (
+        v.custom_rule == null || alltrue([for item in v.custom_rule : (length(item.name) > 0)])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.frontdoor_firewall_policies : (
+        v.custom_rule == null || alltrue([for item in v.custom_rule : (item.match_condition == null || alltrue([for item in item.match_condition : (alltrue([for x in item.match_values : length(x) >= 1 && length(x) <= 256]))]))])
+      )
+    ])
+    error_message = "must be between 1 and 256 characters"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.frontdoor_firewall_policies : (
+        v.custom_rule == null || alltrue([for item in v.custom_rule : (item.match_condition == null || alltrue([for item in item.match_condition : (item.selector == null || (length(item.selector) > 0))]))])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.frontdoor_firewall_policies : (
+        v.managed_rule == null || alltrue([for item in v.managed_rule : (length(item.type) > 0)])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.frontdoor_firewall_policies : (
+        v.managed_rule == null || alltrue([for item in v.managed_rule : (length(item.version) > 0)])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.frontdoor_firewall_policies : (
+        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.exclusion == null || alltrue([for item in item.exclusion : (length(item.selector) > 0)]))])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.frontdoor_firewall_policies : (
+        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.override == null || alltrue([for item in item.override : (length(item.rule_group_name) > 0)]))])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.frontdoor_firewall_policies : (
+        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.override == null || alltrue([for item in item.override : (item.exclusion == null || alltrue([for item in item.exclusion : (length(item.selector) > 0)]))]))])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.frontdoor_firewall_policies : (
+        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.override == null || alltrue([for item in item.override : (item.rule == null || alltrue([for item in item.rule : (length(item.rule_id) > 0)]))]))])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.frontdoor_firewall_policies : (
+        v.managed_rule == null || alltrue([for item in v.managed_rule : (item.override == null || alltrue([for item in item.override : (item.rule == null || alltrue([for item in item.rule : (item.exclusion == null || alltrue([for item in item.exclusion : (length(item.selector) > 0)]))]))]))])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.frontdoor_firewall_policies : (
+        v.tags == null || (length(v.tags) <= 50)
+      )
+    ])
+    error_message = "[from tags.Validate: invalid when len(value) > 50]"
+  }
+  # Note: 20 additional provider-side validators are enforced at apply time but not mirrored as validation{} blocks here (bespoke or non-mechanically-translatable).
 }
 
